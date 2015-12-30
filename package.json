@@ -1,0 +1,30 @@
+{
+  "name": "uglify-matrix",
+  "version": "0.0.1",
+  "description": "Uglify javascript with matrix setting and generate multiple javascript file.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "bin": {
+    "uglify": "bin/uglify-matrix.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qiu8310/uglify-matrix.git"
+  },
+  "keywords": [
+    "uglify",
+    "matrix"
+  ],
+  "author": "Mora",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/qiu8310/uglify-matrix/issues"
+  },
+  "homepage": "https://github.com/qiu8310/uglify-matrix#readme",
+  "dependencies": {
+    "lodash.assign": "^3.2.0",
+    "uglify-js": "^2.6.1"
+  }
+}

@@ -1,0 +1,55 @@
+#! /usr/bin/env node
+
+
+function help() {
+  var str = 'uglify\r\n\r\n'
+    + '  uglify somefile matrix:debug --define DEBUG=true --compress matrix:min --define DEBUG=false\r\n\r\n'
+    + '  Dont support uglify short tag line -d (short for --define)\r\n'
+
+    console.log(str);
+}
+
+var matrix = {};
+var commonOpts = {};
+
+var ref = commonOpts;
+var file = process.argv[2];
+
+var lastKey = null;
+
+process.argv.slice(3).forEach(function (arg) {
+  if (/^matrix:(.+)$/.test(arg)) {
+    var key = RegExp.$1;
+    matrix[key] = ref = {};
+  } else if (ref) {
+    if (arg[0] === '-') {
+      lastKey = arg.replace(/^--?/, '');
+      ref[lastKey] = true;
+    } else {
+      ref[lastKey] = parseArg(arg);
+    }
+  }
+})
+
+
+function parseArg(arg) {
+  if (arg.indexOf('=') > 0) {
+    return arg.split(',').reduce(function (res, curr) {
+      var value = curr.split('=')[1];
+
+      if (value === 'true') value = true;
+      else if (value === 'false') value = false;
+      else if (value === 'null') value = null;
+
+      res[curr.split('=')[0]] = value;
+      return res;
+    }, {});
+  } else {
+    return arg;
+  }
+}
+
+if (!Object.keys(matrix).length) help();
+else require('../src/index.js')(require('path').resolve(file), matrix, commonOpts);
+
+
