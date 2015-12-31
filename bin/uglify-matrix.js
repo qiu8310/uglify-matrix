@@ -1,5 +1,6 @@
 #! /usr/bin/env node
-
+var path = require('path');
+var uglify = require('../src/index.js');
 
 function help() {
   var str = 'uglify\r\n\r\n'
@@ -14,6 +15,7 @@ var commonOpts = {};
 
 var ref = commonOpts;
 var file = process.argv[2];
+if (file) file = path.resolve(file);
 
 var lastKey = null;
 
@@ -29,7 +31,7 @@ process.argv.slice(3).forEach(function (arg) {
       ref[lastKey] = parseArg(arg);
     }
   }
-})
+});
 
 
 function parseArg(arg) {
@@ -49,7 +51,59 @@ function parseArg(arg) {
   }
 }
 
-if (!Object.keys(matrix).length) help();
-else require('../src/index.js')(require('path').resolve(file), matrix, commonOpts);
+if (process.argv[3] === 'defined') {
+  uglify(file, {
+
+    'dev.debug': {
+      define: {
+        __DEBUG__: true,
+        __PROD__: false,
+        __DEV__: true
+      },
+      quotes: 1,
+      beautify: true,
+      compress: {
+        warnings: false,
+        hoistFuns: false,
+        sequences: false
+      },
+      mangle: false
+    },
+
+    'prod.debug': {
+      define: {
+        __DEBUG__: true,
+        __PROD__: true,
+        __DEV__: false,
+      },
+      compress: {
+        deadCode: true,
+        unused: true,
+        warnings: false,
+        dropConsole: false,
+        dropDebugger: false
+      }
+    },
+
+    min: {
+      define: {
+        __DEBUG__: false,
+        __PROD__: true,
+        __DEV__: false,
+      },
+      compress: {
+        deadCode: true,
+        unused: true,
+        warnings: false,
+        dropConsole: true,
+        dropDebugger: true
+      }
+    }
+  }, {});
+} else if (!Object.keys(matrix).length) {
+  help();
+} else {
+  uglify(file, matrix, commonOpts);
+}
 
 
